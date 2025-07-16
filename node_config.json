@@ -1,0 +1,7 @@
+{
+  "rpc_user": "username",
+  "rpc_pass": "password",
+  "rpc_host": "127.0.0.1",
+  "rpc_port": 8332,
+  "wallet_name": "walletname"
+}
