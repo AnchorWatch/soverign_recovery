@@ -44,7 +44,7 @@ def validate_config():
             print("Did you update the config.json file with the contents of your recovery kit in the Signing Information section?")
             return False
         for key in data['signingKeys']:
-            key_required = ['hmac_buffer', 'formatted_key', 'description_template_position']
+            key_required = ['hmacBuffer', 'formattedKey', 'descriptionTemplatePosition']
             key_missing = [k for k in key_required if k not in key]
             if key_missing:
                 print(f"Missing keys in signingKeys entry: {', '.join(key_missing)}")
@@ -99,7 +99,7 @@ def sign_with_ledger():
         policy_name = config['walletName']
         expected_policy_id = config['ledgerID']
         descriptor_template = config['descriptorTemplate']
-        keys_info = [key['formatted_key'] for key in config['signingKeys']]
+        keys_info = [key['formattedKey'] for key in config['signingKeys']]
 
         policy = WalletPolicy(
             name=policy_name,
@@ -109,8 +109,8 @@ def sign_with_ledger():
 
         matching_key = None
         for key in config['signingKeys']:
-            if ']' in key['formatted_key']:
-                formatted_xpub = key['formatted_key'].split(']', 1)[1]
+            if ']' in key['formattedKey']:
+                formatted_xpub = key['formattedKey'].split(']', 1)[1]
                 if formatted_xpub == device_xpub:
                     matching_key = key
                     break
@@ -119,8 +119,8 @@ def sign_with_ledger():
             print(f"No matching key found for device_xpub: {device_xpub}")
             return None
 
-        if matching_key['hmac_buffer'] is not None:
-            policy_hmac = bytes.fromhex(matching_key['hmac_buffer'])
+        if matching_key['hmacBuffer'] is not None:
+            policy_hmac = bytes.fromhex(matching_key['hmacBuffer'])
         else:
             print("No HMAC found. Registering...")
             policy_id_bytes, new_hmac = client.register_wallet(policy)
@@ -128,7 +128,7 @@ def sign_with_ledger():
             if policy_id != expected_policy_id:
                 print(f"Policy ID mismatch! Got: {policy_id}, Expected: {expected_policy_id}")
                 return None
-            matching_key['hmac_buffer'] = new_hmac.hex()
+            matching_key['hmacBuffer'] = new_hmac.hex()
             with open('config.json', 'w') as f:
                 json.dump(config, f, indent=2)
             policy_hmac = new_hmac
@@ -149,7 +149,7 @@ def sign_with_ledger():
             if policy_id != expected_policy_id:
                 print(f"Policy ID mismatch! Got: {policy_id}, Expected: {expected_policy_id}")
                 return None
-            matching_key['hmac_buffer'] = new_hmac.hex()
+            matching_key['hmacBuffer'] = new_hmac.hex()
             with open('config.json', 'w') as f:
                 json.dump(config, f, indent=2)
             policy_hmac = new_hmac
@@ -176,7 +176,7 @@ def sign_with_ledger():
                 if policy_id != expected_policy_id:
                     print(f"Policy ID mismatch! Got: {policy_id}, Expected: {expected_policy_id}")
                     return None
-                matching_key['hmac_buffer'] = new_hmac.hex()
+                matching_key['hmacBuffer'] = new_hmac.hex()
                 with open('config.json', 'w') as f:
                     json.dump(config, f, indent=2)
                 policy_hmac = new_hmac
